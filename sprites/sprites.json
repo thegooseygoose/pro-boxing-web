@@ -1,0 +1,38 @@
+{
+  "frameWidth": 48,
+  "frameHeight": 56,
+  "poses": [
+    "idle",
+    "walk1",
+    "walk2",
+    "punch",
+    "kick",
+    "suplex",
+    "dropkick",
+    "chop",
+    "elbow",
+    "hurt",
+    "down",
+    "lock",
+    "lift",
+    "pin",
+    "getup",
+    "sit",
+    "win"
+  ],
+  "referee": {
+    "file": "referee.png",
+    "frameWidth": 48,
+    "frameHeight": 56,
+    "frames": [
+      "idle1",
+      "idle2",
+      "walk1",
+      "walk2",
+      "kneelReady",
+      "countHalf",
+      "countRaised",
+      "matSlap"
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRO BOXING - BLACK BOX SERIES</title>
+<style>
+  html,body{margin:0;padding:0;background:#000;height:100%;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:monospace}
+  #wrap{position:relative;line-height:0}
+  canvas{
+    /* fill the window as large as possible, keeping the 426:240 (16:9) aspect ratio */
+    width:auto; height:min(96vh, calc(98vw * 240 / 426));
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    background:#000;border:4px solid #222;border-radius:4px;
+  }
+  #scan{
+    position:absolute;inset:4px;pointer-events:none;border-radius:2px;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.12) 3px);
+  }
+  #hint{color:#555;font-size:12px;margin-top:10px;letter-spacing:1px;text-align:center}
+  #hint b{color:#888}
+
+  /* ---- fullscreen: canvas fills the whole screen, hide the hint ---- */
+  :fullscreen #wrap, :-webkit-full-screen #wrap{ margin:0 }
+  :fullscreen canvas, :-webkit-full-screen canvas{
+    width:auto; height:100vh; max-width:100vw; border:0; border-radius:0;
+  }
+  :fullscreen #scan, :-webkit-full-screen #scan{ inset:0; border-radius:0 }
+  :fullscreen #hint, :-webkit-full-screen #hint{ display:none }
+  /* same look when the exe (pywebview) makes its whole window fullscreen */
+  body.fs #wrap{ margin:0 }
+  body.fs canvas{ width:auto; height:100vh; max-width:100vw; border:0; border-radius:0 }
+  body.fs #scan{ inset:0; border-radius:0 }
+  body.fs #hint{ display:none }
+
+  #bootIntro{
+    position:fixed;inset:0;z-index:9999;background:#000;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  #bootIntro img{
+    display:block;width:min(94vw,1000px);height:auto;max-height:80vh;
+    object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;
+    opacity:0;animation:introLogoFade 10s linear forwards;
+  }
+  @keyframes introLogoFade{
+    0%{opacity:0}
+    20%{opacity:1}
+    80%{opacity:1}
+    100%{opacity:0}
+  }
+</style>
+</head>
+<body>
+<div id="bootIntro" aria-label="Goose Prandini Media intro">
+  <img src="goose-prandini-media.png" alt="Goose Prandini Media logo">
+</div>
+<div id="wrap">
+  <canvas id="cv" width="426" height="240"></canvas>
+  <div id="scan"></div>
+</div>
+<script src="sounds.js?v=3"></script>
+<script src="game.js?v=7"></script>
+<script src="boxing.js?v=108"></script>
+<script src="career.js?v=15"></script>
+<script>/* dev play recorder: only on the localhost:8197 preview, never in the exe */ if (location.port==='8197') document.write('<script src="boots_edit/recorder.js?v=8"><\/script>');</script>
+<script>
+  /* Fullscreen toggle: press F, or double-click the game. */
+  function toggleFS(){
+    if (window.pywebview && pywebview.api && pywebview.api.toggle_fullscreen){   // running as the exe
+      document.body.classList.toggle('fs'); pywebview.api.toggle_fullscreen(); return;
+    }
+    var d=document, el=d.documentElement;
+    var fsEl=d.fullscreenElement||d.webkitFullscreenElement;
+    try{
+      if(!fsEl){ (el.requestFullscreen||el.webkitRequestFullscreen).call(el); }
+      else     { (d.exitFullscreen ||d.webkitExitFullscreen ).call(d); }
+    }catch(e){}
+  }
+  addEventListener('keydown', function(ev){
+    if(ev.key==='f'||ev.key==='F'){ ev.preventDefault(); toggleFS(); }
+    if(ev.key==='Escape' && document.body.classList.contains('fs')) toggleFS();   // exe: Esc leaves fullscreen
+  });
+  document.getElementById('cv').addEventListener('dblclick', toggleFS);
+  /* the exe opens fullscreen (1920x1080): use the fullscreen look from the start */
+  addEventListener('pywebviewready', function(){
+    if (pywebview.api && pywebview.api.starts_fullscreen) pywebview.api.starts_fullscreen().then(function(v){ if (v) document.body.classList.add('fs'); });
+  });
+</script>
+</body>
+</html>
